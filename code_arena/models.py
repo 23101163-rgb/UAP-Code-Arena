@@ -31,3 +31,36 @@ class UserManager(BaseUserManager):
         user.is_superuser = True
         user.save(using=self._db)
         return user
+class Problem(models.Model):
+    problem_id = models.AutoField(primary_key=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='problems')
+
+    title = models.CharField(max_length=255)
+    statement = RichTextField()
+    input_specification = RichTextField()
+    output_specification = RichTextField()
+    difficulty = models.CharField(max_length=10, choices=[('Easy', 'Easy'), ('Medium', 'Medium'), ('Hard', 'Hard')],
+                                  default='Easy')
+    time_limit = models.IntegerField(default=1)
+
+    # New many-to-many field for categories
+    categories = models.ManyToManyField(Category, related_name='problems', blank=True)
+
+def __str__(self):
+    return f"{self.title}"
+def test_input_upload_to(instance, filename):
+    return f"problems/{instance.problem.problem_id}/test_inputs/{filename}"
+def test_output_upload_to(instance, filename):
+    return f"problems/{instance.problem.problem_id}/test_outputs/{filename}"
+class TestInput(models.Model):
+    problem = models.ForeignKey('Problem', on_delete=models.CASCADE, related_name='test_inputs')
+    file = models.FileField(upload_to=test_input_upload_to)
+
+def __str__(self):
+    return f"{self.problem.title} - {self.file.name}"
+class TestOutput(models.Model):
+    problem = models.ForeignKey('Problem', on_delete=models.CASCADE, related_name='test_outputs')
+    file = models.FileField(upload_to=test_output_upload_to)
+
+def __str__(self):
+    return f"{self.problem.title} - {self.file.name}"
