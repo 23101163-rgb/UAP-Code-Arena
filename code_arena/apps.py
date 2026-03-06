@@ -1,5 +1,6 @@
 from django.apps import AppConfig
 
 
-class CodeArenaConfig(AppConfig):
-    name = 'code_arena'
+class UapCodearenaConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name ='code_arena'
